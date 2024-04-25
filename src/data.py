@@ -3,7 +3,6 @@ import pandas as pd
 import numpy as np
 import itertools
 import cv2
-from glob import glob
 from torch.utils.data import Dataset, DataLoader
 from pycocotools.coco import COCO
 from tqdm import tqdm
