@@ -4,7 +4,7 @@ import numpy as np
 import itertools
 import cv2
 from glob import glob
-from torch.utils.data import Dataset
+from torch.utils.data import Dataset, DataLoader
 from pycocotools.coco import COCO
 from tqdm import tqdm
 import warnings
@@ -107,18 +107,10 @@ class SegmentationDataset():
 
     
 class DataGenerator(Dataset):
-  # function getting info dataset from json coco
-  # Batch size
-  # subset train or test for annotations
-  # image_list to develop... 
-  # classes classe wanted
-  # input image size tuple (X,X)
-  # annFile path to annoted coco json file file 
-    def __init__(self, dataset_dir, batch_size, subset, classes, 
-                 input_image_size, annFile, shuffle=False):
+    def __init__(self, dataset_dir, subset, classes, 
+                 input_image_size, annFile, shuffle=False, transform=None):
         self.dataset_dir = dataset_dir
         self.subset = subset
-        self.batch_size = batch_size
         self.classes= classes
         self.coco = COCO(annFile)
         self.catIds = self.coco.getCatIds(catNms=self.classes)
@@ -128,11 +120,12 @@ class DataGenerator(Dataset):
         self.indexes = np.arange(len(self.image_list))
         self.input_image_size= (input_image_size)
         self.dataset_size = len(self.image_list)
+        self.transform = transform
         self.shuffle = shuffle
         self.on_epoch_end()
 
     def __len__(self):
-      return int(len(self.image_list)/self.batch_size)
+      return int(len(self.image_list))
 
     def on_epoch_end(self):
         if self.shuffle == True:
@@ -177,22 +170,22 @@ class DataGenerator(Dataset):
             return stacked_img          
     
     def __getitem__(self, index):
-        X = np.empty((self.batch_size, 128, 128, 3))
-        y = np.empty((self.batch_size, 128, 128, 3))
-        indexes = self.indexes[index*self.batch_size:(index+1)*self.batch_size]
+        
+        X = np.empty((128, 128, 3))
+        y = np.empty((128, 128, 3))
 
-        for i in range(len(indexes)):
-          value = indexes[i]
-        #   print(f"Index value: {value}")
-        #   print(f"Content at index: {self.image_list[value]}")
-          img_info = self.image_list[value]
-          w = img_info['height']
-          h = img_info['width']
+        img_info = self.image_list[index]
+        X = self.get_image(img_info['file_name'])
+        if self.transform:
+            X = self.transform(X)
+            
+        mask_train = self.get_levels_mask(img_info['id'])
 
-          X[i,] = self.get_image(img_info['file_name']) 
-          mask_train = self.get_levels_mask(img_info['id'])
-          for j in self.catIds:
-            y[i,:,:,j] = mask_train[j]   
+        for j in self.catIds:
+            if self.transform:
+                y[:, :, j] = self.transform(mask_train[j])
+            else:
+                y[:, :, j] = mask_train[j]
 
         X = np.array(X)
         y = np.array(y)
@@ -201,7 +194,3 @@ class DataGenerator(Dataset):
             return X, y
         else: 
             return X
-
-
-        
-
