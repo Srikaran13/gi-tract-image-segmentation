@@ -117,7 +117,7 @@ class DataGenerator(Dataset):
         self.imgIds = self.coco.getImgIds()
         self.image_list = self.coco.loadImgs(self.imgIds)
         self.indexes = np.arange(len(self.image_list))
-        self.input_image_size= (input_image_size)
+        self.input_image_size = (input_image_size)
         self.dataset_size = len(self.image_list)
         self.transform = transform
         self.shuffle = shuffle
