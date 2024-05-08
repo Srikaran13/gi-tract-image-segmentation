@@ -70,31 +70,37 @@ class IoU(nn.Module):
         iou_values_0 = []
         iou_values_1 = []
         iou_values_2 = []
-        iou = 0.0
-        
+
         for i in range(batch_size):
             for ch in range(channels):
                 input_flat = (input[i, ch] > 0.5).float()
                 target_flat = (target[i, ch] > 0.5).float()
+
                 if input_flat.sum() == 0 and target_flat.sum() == 0:
-                    continue
-                    
-                intersection = np.logical_and(input_flat, target_flat).sum()
-                union = np.logical_or(input_flat, target_flat).sum()
+                    continue  # Skip channel if both input and target are all zeros
+
+                intersection = (input_flat * target_flat).sum()
+                union = (input_flat + target_flat).clamp(0, 1).sum()  # Use clamp to handle union calculation
+
                 if union == 0:
-                    iou = 0  # Avoid division by zero; can also return 1 if both masks are empty
+                    iou = torch.tensor(0.)  # Avoid division by zero; can also return 1 if both masks are empty
                 else:
                     iou = intersection / union
 
+                # Append iou based on the channel
                 if ch == 0:
                     iou_values_0.append(iou)
                 elif ch == 1:
                     iou_values_1.append(iou)
-                else:
+                elif ch == 2:
                     iou_values_2.append(iou)
-        
-        return torch.tensor(iou_values_0).mean(), torch.tensor(iou_values_1).mean(), torch.tensor(iou_values_2).mean()
 
+        # Calculate mean avoiding empty lists
+        mean_iou_0 = torch.tensor(iou_values_0).mean() if iou_values_0 else torch.tensor(0.)
+        mean_iou_1 = torch.tensor(iou_values_1).mean() if iou_values_1 else torch.tensor(0.)
+        mean_iou_2 = torch.tensor(iou_values_2).mean() if iou_values_2 else torch.tensor(0.)
+
+        return mean_iou_0, mean_iou_1, mean_iou_2
 
 
 class AverageMeter(object):
