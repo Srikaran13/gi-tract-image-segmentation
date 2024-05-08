@@ -159,7 +159,10 @@ class DataGenerator(Dataset):
       return masks       
 
     def get_image(self, file_path):
-        train_img = cv2.imread(os.path.join(self.dataset_dir, file_path), cv2.IMREAD_ANYDEPTH)
+        full_path = os.path.join(self.dataset_dir, file_path)
+        train_img = cv2.imread(full_path, cv2.IMREAD_ANYDEPTH)
+        if train_img is None:
+            raise ValueError(f"Unable to load image from path: {full_path}")
         train_img = cv2.resize(train_img, (self.input_image_size))
         train_img = train_img.astype(np.float32) / 255.
         if (len(train_img.shape)==3 and train_img.shape[2]==3): 
