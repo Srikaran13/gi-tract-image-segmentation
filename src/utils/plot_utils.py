@@ -74,10 +74,6 @@ def display_comparison(img_s, pred_s, mask_s):
         # Similarly adjust y if it is in the shape (3, 128, 128)
         if y.shape[0] == 3:
             y = np.transpose(y, (1, 2, 0)) 
-
-        cmap1 = ListedColormap(['none', 'red'])  # Mask 1 in red
-        cmap2 = ListedColormap(['none', 'green'])  # Mask 2 in green
-        cmap3 = ListedColormap(['none', 'blue'])  # Mask 3 in blue
     
         # Display the grayscale image
         plt.imshow((X/255.)[:,:,0], cmap='gray')
