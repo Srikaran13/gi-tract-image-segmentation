@@ -75,6 +75,9 @@ class IoU(nn.Module):
             for ch in range(channels):
                 input_flat = (input[i, ch] > 0.5).float()
                 target_flat = (target[i, ch] > 0.5).float()
+                
+                if target_flat.sum() == 0:
+                    continue # skip cases where the target is all zeros since we dont have ground truth
 
                 if input_flat.sum() == 0 and target_flat.sum() == 0:
                     continue  # Skip channel if both input and target are all zeros
