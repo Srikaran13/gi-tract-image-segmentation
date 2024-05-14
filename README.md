@@ -1,6 +1,21 @@
 # 6.8300 - Advances in Computer Vision Course Project
 
-This course project is adapted from the Kaggle competition found here: [UW-Madison GI Tract Image Segmentation](https://www.kaggle.com/competitions/uw-madison-gi-tract-image-segmentation). Please follow the steps below to set up and run the project.
+This course project is adapted from the Kaggle competition found here: [UW-Madison GI Tract Image Segmentation](https://www.kaggle.com/competitions/uw-madison-gi-tract-image-segmentation). This paper introduces an innovative approach to
+computer-aided diagnosis for radiation therapy planning
+in gastrointestinal (GI) cancer patients. By applying deep
+learning methodologies on the segmentation of stomach and
+intestines from MRI scans, we aim to expedite treatment
+procedures and optimize therapy outcomes. By leveraging
+anonymized MRIs sourced from the UW-Madison Carbone
+Cancer Center, we employ advanced models such as UNet,
+DeepLabv3+, and R-CNNs, exploring multi-task learning
+through supervised approaches. We found that Efficient Net
+excels at segmenting the stomach and large bowels, while
+Mask R-CNN delivers the most balanced high performance
+across all three organs. This innovative approach has the
+potential to revolutionize radiation therapy planning, expediting treatment procedures and enabling radiation oncologists to concentrate more on treatment optimization, ultimately enhancing the overall effectiveness of therapies.
+
+Please follow the steps below to set up and run the project.
 
 ## Getting Started
 
@@ -39,3 +54,16 @@ Follow these steps to download and prepare the dataset for the project:
    - Rename the extracted dataset folder to `datasets` to maintain consistency with project scripts.
 
 By following these steps, you will have the required data ready in the appropriate format and location for further processing and analysis.
+
+
+## Project Report
+You can view the detailed project report [here](./Project%20Report.pdf).
+
+## Repository Structure
+### Notebooks
+- **Processing**: All the Jupyter notebooks used for processing the data can be found in the `notebooks` folder.
+
+### Source Code 
+- **Models**: Implementation of various models can be found in `model.py`.
+- **Data Handling**: Scripts for data preprocessing and loading are in `data.py`.
+- **Loss Functions**: Custom loss functions used in the project are defined in `loss.py`.
